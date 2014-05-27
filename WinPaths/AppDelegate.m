@@ -8,11 +8,14 @@
 
 #import "AppDelegate.h"
 
+#import "WPServiceProvider.h"
+
 @implementation AppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    // Insert code here to initialize your application
+    WPServiceProvider *prov = [[WPServiceProvider alloc] init];
+    [NSApp setServicesProvider:prov];
 }
 
 @end

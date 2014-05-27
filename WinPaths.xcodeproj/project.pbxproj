@@ -18,6 +18,8 @@
 		1C39E56C1934E6710067CE8C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C39E54B1934E6710067CE8C /* Cocoa.framework */; };
 		1C39E5741934E6720067CE8C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1C39E5721934E6720067CE8C /* InfoPlist.strings */; };
 		1C39E5761934E6720067CE8C /* WinPathsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C39E5751934E6720067CE8C /* WinPathsTests.m */; };
+		1C39E5811934E73C0067CE8C /* WPOpenLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C39E5801934E73C0067CE8C /* WPOpenLink.m */; };
+		1C39E5841934EB160067CE8C /* WPServiceProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C39E5831934EB160067CE8C /* WPServiceProvider.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +52,10 @@
 		1C39E5711934E6720067CE8C /* WinPathsTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WinPathsTests-Info.plist"; sourceTree = "<group>"; };
 		1C39E5731934E6720067CE8C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1C39E5751934E6720067CE8C /* WinPathsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WinPathsTests.m; sourceTree = "<group>"; };
+		1C39E57F1934E73C0067CE8C /* WPOpenLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WPOpenLink.h; sourceTree = "<group>"; };
+		1C39E5801934E73C0067CE8C /* WPOpenLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WPOpenLink.m; sourceTree = "<group>"; };
+		1C39E5821934EB160067CE8C /* WPServiceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WPServiceProvider.h; sourceTree = "<group>"; };
+		1C39E5831934EB160067CE8C /* WPServiceProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WPServiceProvider.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +124,10 @@
 				1C39E55D1934E6710067CE8C /* AppDelegate.h */,
 				1C39E55E1934E6710067CE8C /* AppDelegate.m */,
 				1C39E5601934E6710067CE8C /* MainMenu.xib */,
+				1C39E5821934EB160067CE8C /* WPServiceProvider.h */,
+				1C39E5831934EB160067CE8C /* WPServiceProvider.m */,
+				1C39E57F1934E73C0067CE8C /* WPOpenLink.h */,
+				1C39E5801934E73C0067CE8C /* WPOpenLink.m */,
 				1C39E5631934E6710067CE8C /* Images.xcassets */,
 				1C39E5521934E6710067CE8C /* Supporting Files */,
 			);
@@ -253,6 +263,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C39E55F1934E6710067CE8C /* AppDelegate.m in Sources */,
+				1C39E5841934EB160067CE8C /* WPServiceProvider.m in Sources */,
+				1C39E5811934E73C0067CE8C /* WPOpenLink.m in Sources */,
 				1C39E5581934E6710067CE8C /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
