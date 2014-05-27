@@ -10,4 +10,5 @@
 
 @interface WPServiceProvider : NSObject
 - (void)openLinkService:(NSPasteboard *)pboard userData:(NSString *)userData error:(NSString **)error;
+- (void)copyPathService:(NSPasteboard *)pboard userData:(NSString *)userData error:(NSString **)error;
 @end

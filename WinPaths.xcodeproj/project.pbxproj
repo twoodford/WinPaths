@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C0E597919353F5900CC45C8 /* WPCopyPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C0E597819353F5900CC45C8 /* WPCopyPath.m */; };
 		1C39E54C1934E6710067CE8C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C39E54B1934E6710067CE8C /* Cocoa.framework */; };
 		1C39E5561934E6710067CE8C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1C39E5541934E6710067CE8C /* InfoPlist.strings */; };
 		1C39E5581934E6710067CE8C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C39E5571934E6710067CE8C /* main.m */; };
@@ -33,6 +34,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1C0E597719353F5900CC45C8 /* WPCopyPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WPCopyPath.h; sourceTree = "<group>"; };
+		1C0E597819353F5900CC45C8 /* WPCopyPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WPCopyPath.m; sourceTree = "<group>"; };
 		1C39E5481934E6710067CE8C /* WinPaths.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WinPaths.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C39E54B1934E6710067CE8C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		1C39E54E1934E6710067CE8C /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -128,6 +131,8 @@
 				1C39E5831934EB160067CE8C /* WPServiceProvider.m */,
 				1C39E57F1934E73C0067CE8C /* WPOpenLink.h */,
 				1C39E5801934E73C0067CE8C /* WPOpenLink.m */,
+				1C0E597719353F5900CC45C8 /* WPCopyPath.h */,
+				1C0E597819353F5900CC45C8 /* WPCopyPath.m */,
 				1C39E5631934E6710067CE8C /* Images.xcassets */,
 				1C39E5521934E6710067CE8C /* Supporting Files */,
 			);
@@ -263,6 +268,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C39E55F1934E6710067CE8C /* AppDelegate.m in Sources */,
+				1C0E597919353F5900CC45C8 /* WPCopyPath.m in Sources */,
 				1C39E5841934EB160067CE8C /* WPServiceProvider.m in Sources */,
 				1C39E5811934E73C0067CE8C /* WPOpenLink.m in Sources */,
 				1C39E5581934E6710067CE8C /* main.m in Sources */,
@@ -478,6 +484,7 @@
 				1C39E57B1934E6720067CE8C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1C39E57C1934E6720067CE8C /* Build configuration list for PBXNativeTarget "WinPathsTests" */ = {
 			isa = XCConfigurationList;
@@ -486,6 +493,7 @@
 				1C39E57E1934E6720067CE8C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
