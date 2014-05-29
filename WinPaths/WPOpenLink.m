@@ -26,6 +26,27 @@
     NSString *slashed = [link stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
     NSURL *url = [NSURL URLWithString: [NSString stringWithFormat:@"smb:%@", slashed]];
     NSLog(@"slashed=%@", url);
-    [[NSWorkspace sharedWorkspace] openURL:url];
+    NSArray *path = [url pathComponents];
+    //DBG NSLog(@"pathComponents=%@", path);
+    
+    // Open SMB share
+    NSString *basefolder = [path firstObject];
+    if ([basefolder isEqualTo:@"/"]) {
+        basefolder = [path objectAtIndex:1];
+    }
+    NSURL *shareUrl = [NSURL URLWithString:[NSString stringWithFormat:@"smb://%@/%@", [url host], basefolder]];
+    NSLog(@"Mounting SMB share using URL \"%@\"", shareUrl);
+    //[[NSWorkspace sharedWorkspace] openURL:shareUrl];
+    FSVolumeRefNum returnRefNum;
+    FSMountServerVolumeSync( (CFURLRef)CFBridgingRetain(shareUrl), NULL, NULL, NULL, &returnRefNum, 0L);
+    
+    if (returnRefNum != 0) {
+        *error = @"Couldn't mount volume";
+    }
+    
+    // Open the file itself
+    NSURL *fileUrl = [[NSURL URLWithString:[NSString stringWithFormat: @"file:///Volumes/%@", [path componentsJoinedByString:@"/"]]] absoluteURL];
+    NSLog(@"Opening target file using URL \"%@\"", fileUrl);
+    [[NSWorkspace sharedWorkspace] openURL:fileUrl];
 }
 @end
