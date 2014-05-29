@@ -36,12 +36,17 @@
     }
     NSURL *shareUrl = [NSURL URLWithString:[NSString stringWithFormat:@"smb://%@/%@", [url host], basefolder]];
     NSLog(@"Mounting SMB share using URL \"%@\"", shareUrl);
-    //[[NSWorkspace sharedWorkspace] openURL:shareUrl];
+    
+    /* 
+     * This method is deprecated, unforetunately
+     * In the worst case,[[NSWorkspace sharedWorkspace] openURL:...] can be used to mount a volume
+     * Disk Arbitration is supposedly superseding what I'm using, but it doesn't look like it 
+     * actually works, and apparently iTunes still uses this method, so I'll stick with it for now.
+     */
     FSVolumeRefNum returnRefNum;
     FSMountServerVolumeSync( (CFURLRef)CFBridgingRetain(shareUrl), NULL, NULL, NULL, &returnRefNum, 0L);
-    
     if (returnRefNum != 0) {
-        *error = @"Couldn't mount volume";
+        *error = @"Couldn't mount SMB volume";
     }
     
     // Open the file itself
