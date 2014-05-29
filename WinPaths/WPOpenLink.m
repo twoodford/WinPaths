@@ -20,6 +20,8 @@
 
 #import "WPOpenLink.h"
 
+#import <NetFS/NetFS.h>
+
 @implementation WPOpenLink
 +(void) openLink: (NSString *) link error:(NSString **) error
 {
@@ -37,17 +39,15 @@
     NSURL *shareUrl = [NSURL URLWithString:[NSString stringWithFormat:@"smb://%@/%@", [url host], basefolder]];
     NSLog(@"Mounting SMB share using URL \"%@\"", shareUrl);
     
-    /* 
-     * This method is deprecated, unforetunately
-     * In the worst case,[[NSWorkspace sharedWorkspace] openURL:...] can be used to mount a volume
-     * Disk Arbitration is supposedly superseding what I'm using, but it doesn't look like it 
-     * actually works, and apparently iTunes still uses this method, so I'll stick with it for now.
-     */
-    FSVolumeRefNum returnRefNum;
-    FSMountServerVolumeSync( (CFURLRef)CFBridgingRetain(shareUrl), NULL, NULL, NULL, &returnRefNum, 0L);
-    if (returnRefNum != 0) {
-        *error = @"Couldn't mount SMB volume";
+    
+    CFArrayRef mountpoints = CFArrayCreate(NULL, NULL, NULL, NULL);
+    int merr = NetFSMountURLSync(CFBridgingRetain(shareUrl), NULL, NULL, NULL, NULL, NULL, &mountpoints);
+    if (merr != 0) {
+        *error = @"Could not mount SMB volume";
     }
+    CFStringRef basepath = (CFStringRef) CFArrayGetValueAtIndex(mountpoints, 0);
+    // basepath is the location that the fs was mounted to, should be used as as the basepath eventually, but more work will be needed
+    
     
     // Open the file itself
     NSURL *fileUrl = [[NSURL URLWithString:[NSString stringWithFormat: @"file:///Volumes/%@", [path componentsJoinedByString:@"/"]]] absoluteURL];
