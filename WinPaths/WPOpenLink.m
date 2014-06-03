@@ -40,18 +40,44 @@
     NSLog(@"Mounting SMB share using URL \"%@\"", shareUrl);
     
     
-    CFArrayRef mountpoints = CFArrayCreate(NULL, NULL, NULL, NULL);
+    CFArrayRef mountpoints = CFArrayCreate(NULL, NULL, 0, NULL);
     int merr = NetFSMountURLSync(CFBridgingRetain(shareUrl), NULL, NULL, NULL, NULL, NULL, &mountpoints);
     if (merr != 0) {
         *error = @"Could not mount SMB volume";
     }
-    CFStringRef basepath = (CFStringRef) CFArrayGetValueAtIndex(mountpoints, 0);
-    // basepath is the location that the fs was mounted to, should be used as as the basepath eventually, but more work will be needed
-    
     
     // Open the file itself
-    NSURL *fileUrl = [[NSURL URLWithString:[NSString stringWithFormat: @"file:///Volumes/%@", [path componentsJoinedByString:@"/"]]] absoluteURL];
-    NSLog(@"Opening target file using URL \"%@\"", fileUrl);
-    [[NSWorkspace sharedWorkspace] openURL:fileUrl];
+    NSString *basepath;
+    // Check if we actually mounted anything new
+    if (CFArrayGetCount(mountpoints) > 0) {
+        // basepath is the location that the fs was mounted to
+        basepath = (NSString *) CFArrayGetValueAtIndex(mountpoints, 0);
+    } else {
+        // If we didn't, we check every mounted volume to find where it was mounted previously
+        NSArray *mounted = [[NSFileManager defaultManager] mountedVolumeURLsIncludingResourceValuesForKeys:[NSArray arrayWithObject:NSURLVolumeURLForRemountingKey] options:0];
+        NSURL *rsrcUrl;
+        NSError *err;
+        for (NSURL *mountUrl in mounted) {
+            [mountUrl getResourceValue:&rsrcUrl forKey:NSURLVolumeURLForRemountingKey error:&err];
+            rsrcUrl = [rsrcUrl absoluteURL];
+            if (err != nil) {
+                NSLog(@"Couldn't check the mount URL: %@", err);
+                *error = @"Couldn't check the mount URL";
+                break;
+            } else if ([[rsrcUrl host] isEqualTo:[shareUrl host]] && [[rsrcUrl path] isEqualTo:[shareUrl path]] && [[rsrcUrl scheme] isEqualTo:[shareUrl scheme]]) {
+                basepath = [mountUrl path];
+                break;
+            }
+        }
+    }
+    if (basepath == nil) {
+        *error = @"Could not locate the previously-mounted share";
+        NSLog(@"Basepath is still nil, conceding defeat");
+    } else {
+        NSString *filepath = [[path subarrayWithRange:NSMakeRange(2, [path count]-2)] componentsJoinedByString:@"/"];
+        NSURL *fileUrl = [[NSURL URLWithString:[NSString stringWithFormat: @"file://%@/%@", basepath, filepath]] absoluteURL];
+        NSLog(@"Opening target file using URL \"%@\"", fileUrl);
+        [[NSWorkspace sharedWorkspace] openURL:fileUrl];
+    }
 }
 @end
