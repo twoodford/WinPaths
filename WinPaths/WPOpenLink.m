@@ -40,17 +40,17 @@
     NSLog(@"Mounting SMB share using URL \"%@\"", shareUrl);
     
     
-    CFArrayRef mountpoints = CFArrayCreate(NULL, NULL, 0, NULL);
+    CFArrayRef mountpoints = CFArrayCreate(NULL, NULL, 0, NULL); // Anytime something is mounted, it's added to this array
     int merr = NetFSMountURLSync(CFBridgingRetain(shareUrl), NULL, NULL, NULL, NULL, NULL, &mountpoints);
     if (merr != 0) {
         *error = @"Could not mount SMB volume";
     }
     
     // Open the file itself
+    // basepath is the location that the fs was mounted to
     NSString *basepath;
     // Check if we actually mounted anything new
     if (CFArrayGetCount(mountpoints) > 0) {
-        // basepath is the location that the fs was mounted to
         basepath = (NSString *) CFArrayGetValueAtIndex(mountpoints, 0);
     } else {
         // If we didn't, we check every mounted volume to find where it was mounted previously
@@ -65,6 +65,7 @@
                 *error = @"Couldn't check the mount URL";
                 break;
             } else if ([[rsrcUrl host] isEqualTo:[shareUrl host]] && [[rsrcUrl path] isEqualTo:[shareUrl path]] && [[rsrcUrl scheme] isEqualTo:[shareUrl scheme]]) {
+                // The above checks are needed because rsrcUrl will have a username, while shareUrl will not
                 basepath = [mountUrl path];
                 break;
             }
