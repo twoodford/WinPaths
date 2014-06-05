@@ -21,6 +21,7 @@
 #import "WPOpenLink.h"
 
 #import <NetFS/NetFS.h>
+#import <ScriptingBridge/ScriptingBridge.h>
 
 @implementation WPOpenLink
 +(void) openLink: (NSString *) link error:(NSString **) error
@@ -79,6 +80,18 @@
         NSURL *fileUrl = [[NSURL URLWithString:[NSString stringWithFormat: @"file://%@/%@", basepath, filepath]] absoluteURL];
         NSLog(@"Opening target file using URL \"%@\"", fileUrl);
         [[NSWorkspace sharedWorkspace] openURL:fileUrl];
+        BOOL isDir;
+        [[NSFileManager defaultManager] fileExistsAtPath:[fileUrl path] isDirectory:&isDir];
+        if (isDir) {
+            NSLog(@"Pushing finder to front");
+            [WPOpenLink activateFinder];
+        }
     }
+}
+
++(void) activateFinder
+{
+    SBApplication *finder = [SBApplication applicationWithBundleIdentifier:@"com.apple.finder"];
+    [finder activate];
 }
 @end
