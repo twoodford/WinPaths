@@ -34,6 +34,7 @@
     }
     NSString *pboardString = [pboard stringForType:NSPasteboardTypeString];
     [WPOpenLink openLink:pboardString error:error];
+    [[NSApplication sharedApplication] terminate:self];
 }
 
 - (void)copyPathService:(NSPasteboard *)pboard userData:(NSString *)userData error:(NSString **)error
@@ -46,5 +47,6 @@
     }
     NSURL *inurl = [[pboard readObjectsForClasses:[NSArray arrayWithObject:[NSURL class]] options:[NSDictionary dictionary]] objectAtIndex:0];
     [WPCopyPath copyPath:inurl];
+    [[NSApplication sharedApplication] terminate:self];
 }
 @end
