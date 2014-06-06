@@ -50,6 +50,11 @@
         if (merr != 0) {
             *error = @"Could not mount SMB volume";
         }
+        if(merr > 0) {
+            NSLog(@"NetFSMountURLSync(): got errno error: %s", strerror(errno));
+        } else if (merr < 0) {
+            NSLog(@"NetFSMountURLSync(): got OSStatus error: %@", [NSError errorWithDomain:NSOSStatusErrorDomain code:merr userInfo:nil]);
+        }
         basepath = (NSString *) CFArrayGetValueAtIndex(mountpoints, 0);
     }
     
