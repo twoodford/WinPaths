@@ -28,7 +28,7 @@
 {
     NSString *slashed = [[link stringByReplacingOccurrencesOfString:@"\\" withString:@"/"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     NSURL *url = [NSURL URLWithString: [NSString stringWithFormat:@"smb:%@", slashed]];
-    NSLog(@"slashed=%@", url);
+    //DBG NSLog(@"slashed=%@", url);
     NSArray *path = [url pathComponents];
     //DBG NSLog(@"pathComponents=%@", path);
     
@@ -69,7 +69,7 @@
         BOOL isDir;
         [[NSFileManager defaultManager] fileExistsAtPath:[fileUrl path] isDirectory:&isDir];
         if (isDir) {
-            NSLog(@"Pushing finder to front");
+            //DBG NSLog(@"Pushing finder to front");
             [WPOpenLink activateFinder];
         }
     }
