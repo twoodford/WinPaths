@@ -26,7 +26,7 @@
 @implementation WPOpenLink
 +(void) openLink: (NSString *) link error:(NSString **) error
 {
-    NSString *slashed = [link stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+    NSString *slashed = [[link stringByReplacingOccurrencesOfString:@"\\" withString:@"/"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     NSURL *url = [NSURL URLWithString: [NSString stringWithFormat:@"smb:%@", slashed]];
     NSLog(@"slashed=%@", url);
     NSArray *path = [url pathComponents];
