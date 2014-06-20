@@ -52,8 +52,13 @@
         }
         if(merr > 0) {
             NSLog(@"NetFSMountURLSync(): got errno error: %s", strerror(errno));
+            return;
         } else if (merr < 0) {
-            NSLog(@"NetFSMountURLSync(): got OSStatus error: %@", [NSError errorWithDomain:NSOSStatusErrorDomain code:merr userInfo:nil]);
+            NSError *mnserr = [NSError errorWithDomain:NSOSStatusErrorDomain code:merr userInfo:nil];
+            NSLog(@"NetFSMountURLSync(): got OSStatus error: %@", mnserr);
+            NSModalResponse userChoice = [[NSAlert alertWithError:mnserr] runModal];
+            NSLog(@"NSAlert modal response: %ld", (long)userChoice);
+            return;
         }
         basepath = (NSString *) CFArrayGetValueAtIndex(mountpoints, 0);
     }
@@ -61,18 +66,35 @@
     if (basepath == nil) {
         *error = @"Could not locate the previously-mounted share";
         NSLog(@"Basepath is still nil, conceding defeat");
+        [WPOpenLink doSimpleAlert:@"Network Volume Mount Failed" withDescription:@"Could not locate the mountpoint"];
     } else {
         NSString *filepath = [[path subarrayWithRange:NSMakeRange(2, [path count]-2)] componentsJoinedByString:@"/"];
         NSURL *fileUrl = [[NSURL URLWithString:[NSString stringWithFormat: @"file://%@/%@", basepath, filepath]] absoluteURL];
-        NSLog(@"Opening target file using URL \"%@\"", fileUrl);
-        [[NSWorkspace sharedWorkspace] openURL:fileUrl];
-        BOOL isDir;
-        [[NSFileManager defaultManager] fileExistsAtPath:[fileUrl path] isDirectory:&isDir];
-        if (isDir) {
-            //DBG NSLog(@"Pushing finder to front");
+        [WPOpenLink doUrlOpen:fileUrl];
+    }
+}
+
++(void) doUrlOpen: (NSURL *) target
+{
+    BOOL isDir;
+    BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:[target path] isDirectory:&isDir];
+    if (exists) {
+        NSLog(@"Opening target file using URL \"%@\"", target);
+        BOOL success = [[NSWorkspace sharedWorkspace] openURL:target];
+        if (!success) {
+            [WPOpenLink doSimpleAlert:@"Opening File Failed" withDescription:@"File exists, but could not be opened"];
+        } else if (isDir) {
             [WPOpenLink activateFinder];
         }
+    } else {
+        [WPOpenLink doSimpleAlert:@"File Does Not Exist" withDescription:[NSString stringWithFormat:@"No file exists at the URL \"%@\"", target]];
     }
+}
+
++(void) doSimpleAlert: (NSString *) title withDescription: (NSString *)informativeText
+{
+    // Ignore return value because there's only one possibility
+    [[NSAlert alertWithMessageText:title defaultButton:nil alternateButton:nil otherButton:nil informativeTextWithFormat:@"%@", informativeText] runModal];
 }
 
 +(NSString *) findMountPointForURL: (NSURL *) shareUrl error: (NSString **) error
