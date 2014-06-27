@@ -27,6 +27,7 @@
 +(void) openLink: (NSString *) link error:(NSString **) error
 {
     NSString *slashed = [[link stringByReplacingOccurrencesOfString:@"\\" withString:@"/"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+    slashed = [slashed stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet characterSetWithCharactersInString:@"/"]];
     NSURL *url = [NSURL URLWithString: [NSString stringWithFormat:@"smb:%@", slashed]];
     //DBG NSLog(@"slashed=%@", url);
     NSArray *path = [url pathComponents];
