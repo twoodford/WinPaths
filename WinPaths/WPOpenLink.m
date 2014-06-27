@@ -27,7 +27,7 @@
 +(void) openLink: (NSString *) link error:(NSString **) error
 {
     NSString *slashed = [[link stringByReplacingOccurrencesOfString:@"\\" withString:@"/"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-    slashed = [slashed stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet characterSetWithCharactersInString:@"/"]];
+    slashed = [self percentEscape:slashed];
     NSURL *url = [NSURL URLWithString: [NSString stringWithFormat:@"smb:%@", slashed]];
     //DBG NSLog(@"slashed=%@", url);
     NSArray *path = [url pathComponents];
@@ -38,7 +38,8 @@
     if ([basefolder isEqualTo:@"/"]) {
         basefolder = [path objectAtIndex:1];
     }
-    NSURL *shareUrl = [NSURL URLWithString:[NSString stringWithFormat:@"smb://%@/%@", [url host], basefolder]];
+    NSURL *shareUrl = [NSURL URLWithString:[NSString stringWithFormat:@"smb://%@/%@", [url host], [self percentEscape:basefolder]]];
+    
     
     // basepath is the location that the fs was mounted to
     NSString *basepath = [WPOpenLink findMountPointForURL:shareUrl error:error]; // Check if it's mounted first
@@ -70,7 +71,7 @@
         [WPOpenLink doSimpleAlert:@"Network Volume Mount Failed" withDescription:@"Could not locate the mountpoint"];
     } else {
         NSString *filepath = [[path subarrayWithRange:NSMakeRange(2, [path count]-2)] componentsJoinedByString:@"/"];
-        NSURL *fileUrl = [[NSURL URLWithString:[NSString stringWithFormat: @"file://%@/%@", basepath, filepath]] absoluteURL];
+        NSURL *fileUrl = [NSURL URLWithString:[NSString stringWithFormat: @"file://%@/%@", [self percentEscape:basepath], [self percentEscape:filepath]]];
         [WPOpenLink doUrlOpen:fileUrl];
     }
 }
@@ -79,8 +80,8 @@
 {
     BOOL isDir;
     BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:[target path] isDirectory:&isDir];
+    NSLog(@"Opening target file using URL \"%@\"", target);
     if (exists) {
-        NSLog(@"Opening target file using URL \"%@\"", target);
         BOOL success = [[NSWorkspace sharedWorkspace] openURL:target];
         if (!success) {
             [WPOpenLink doSimpleAlert:@"Opening File Failed" withDescription:@"File exists, but could not be opened"];
@@ -101,6 +102,7 @@
 +(NSString *) findMountPointForURL: (NSURL *) shareUrl error: (NSString **) error
 {
     NSString *ret = NULL;
+    NSHost *shareHost = [NSHost hostWithName:[shareUrl host]];
     NSArray *mounted = [[NSFileManager defaultManager] mountedVolumeURLsIncludingResourceValuesForKeys:[NSArray arrayWithObject:NSURLVolumeURLForRemountingKey] options:0];
     NSURL *rsrcUrl;
     NSError *err;
@@ -111,10 +113,12 @@
             NSLog(@"Couldn't check the mount URL: %@", err);
             *error = @"Couldn't check the mount URL";
             break;
-        } else if ([[rsrcUrl host] isEqualTo:[shareUrl host]] && [[rsrcUrl path] isEqualTo:[shareUrl path]] && [[rsrcUrl scheme] isEqualTo:[shareUrl scheme]]) {
-            // The above checks are needed because rsrcUrl will have a username, while shareUrl will not
-            ret = [mountUrl path];
-            break;
+        } else if ([[rsrcUrl path] isEqualTo:[shareUrl path]] && [[rsrcUrl scheme] isEqualTo:[shareUrl scheme]]) {
+            if ([[NSHost hostWithName:[rsrcUrl host]] isEqualToHost:shareHost]) {
+                // The above checks are needed because rsrcUrl will have a username, while shareUrl will not
+                ret = [mountUrl path];
+                break;
+            }
         }
     }
     return ret;
@@ -124,5 +128,10 @@
 {
     SBApplication *finder = [SBApplication applicationWithBundleIdentifier:@"com.apple.finder"];
     [finder activate];
+}
+
++(NSString *) percentEscape:(NSString *) input
+{
+    return [input stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet characterSetWithCharactersInString:@"/"]];
 }
 @end
