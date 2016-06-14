@@ -23,23 +23,27 @@
 @implementation WPCopyPath
 + (void) copyPath: (NSURL *)inurl
 {
+    //NSLog(@"inurl=%@", inurl);
     NSURL *url;
     NSError *__autoreleasing *err;
     [inurl getResourceValue:&url forKey:NSURLVolumeURLForRemountingKey error:err];
     url = [url absoluteURL];
     if (err!=NULL) {
         NSLog(@"url=%@", url);
-        //NSLog(@"Error determining mount URL: %@", err);
+        //DBG NSLog(@"Error determining mount URL: %@", err);
     }
     NSArray *components = [inurl pathComponents];
     components = [components subarrayWithRange:NSMakeRange(3, [components count] - 3)];
     NSString *normalized2 = [components componentsJoinedByString:@"\\"];
-    NSLog(@"path2=%@", normalized2);
+    //DBG NSLog(@"path2=%@", normalized2);
     components = [url pathComponents];
     components = [components subarrayWithRange:NSMakeRange(1, [components count] - 1)];
     NSString *normalized1 = [components componentsJoinedByString:@"\\"];
-    NSLog(@"path1=%@", normalized1);
-    NSString *winpath = [NSString stringWithFormat:@"\\\\%@\\%@\\%@", [url host], normalized1, normalized2];
+    //DBG NSLog(@"path1=%@", normalized1);
+    // Get hostname
+    NSString *normhost = [[[url host] componentsSeparatedByString:@"."] objectAtIndex:0];
+    //DBG NSLog(@"host=%@", normhost);
+    NSString *winpath = [NSString stringWithFormat:@"\\\\%@\\%@\\%@", normhost, normalized1, normalized2];
     
     
     [[NSPasteboard generalPasteboard] declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
