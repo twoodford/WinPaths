@@ -40,12 +40,13 @@
 - (void)copyPathService:(NSPasteboard *)pboard userData:(NSString *)userData error:(NSString **)error
 {
     // Boilerplate service code
-    NSArray *classes = [NSArray arrayWithObject:[NSString class]];
+    NSArray *classes = [NSArray arrayWithObject:[NSURL class]];
     if (![pboard canReadObjectForClasses:classes options:[NSDictionary dictionary]]) {
+        NSLog(@"Couldn't get path string from the pasteboard");
         *error = @"Couldn't get path string from the pasteboard";
         return;
     }
-    NSURL *inurl = [[pboard readObjectsForClasses:[NSArray arrayWithObject:[NSURL class]] options:[NSDictionary dictionary]] objectAtIndex:0];
+    NSURL *inurl = [[pboard readObjectsForClasses:classes options:[NSDictionary dictionary]] objectAtIndex:0];
     [WPCopyPath copyPath:inurl];
     [[NSApplication sharedApplication] terminate:self];
 }
