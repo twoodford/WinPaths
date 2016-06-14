@@ -53,7 +53,7 @@
             *error = @"Could not mount SMB volume";
         }
         if(merr > 0) {
-            NSLog(@"NetFSMountURLSync(): got errno error: %s", strerror(errno));
+            NSLog(@"NetFSMountURLSync(): got errno error: %d (%s)", merr, strerror(merr));
             return;
         } else if (merr < 0) {
             NSError *mnserr = [NSError errorWithDomain:NSOSStatusErrorDomain code:merr userInfo:nil];
@@ -102,7 +102,6 @@
 +(NSString *) findMountPointForURL: (NSURL *) shareUrl error: (NSString **) error
 {
     NSString *ret = NULL;
-    NSHost *shareHost = [NSHost hostWithName:[shareUrl host]];
     NSArray *mounted = [[NSFileManager defaultManager] mountedVolumeURLsIncludingResourceValuesForKeys:[NSArray arrayWithObject:NSURLVolumeURLForRemountingKey] options:0];
     NSURL *rsrcUrl;
     NSError *err;
@@ -114,7 +113,7 @@
             *error = @"Couldn't check the mount URL";
             break;
         } else if ([[rsrcUrl path] isEqualTo:[shareUrl path]] && [[rsrcUrl scheme] isEqualTo:[shareUrl scheme]]) {
-            if ([[NSHost hostWithName:[rsrcUrl host]] isEqualToHost:shareHost]) {
+            if ([[rsrcUrl host] isEqualToString:[shareUrl host]]) {
                 // The above checks are needed because rsrcUrl will have a username, while shareUrl will not
                 ret = [mountUrl path];
                 break;
