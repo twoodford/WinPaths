@@ -41,7 +41,7 @@
     NSString *normalized1 = [components componentsJoinedByString:@"\\"];
     //DBG NSLog(@"path1=%@", normalized1);
     // Get hostname
-    NSString *normhost = [[[url host] componentsSeparatedByString:@"."] objectAtIndex:0];
+    NSString *normhost = [url host];
     //DBG NSLog(@"host=%@", normhost);
     NSString *winpath = [NSString stringWithFormat:@"\\\\%@\\%@\\%@", normhost, normalized1, normalized2];
     
