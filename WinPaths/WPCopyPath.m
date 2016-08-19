@@ -23,27 +23,27 @@
 @implementation WPCopyPath
 + (void) copyPath: (NSURL *)inurl
 {
-    //NSLog(@"inurl=%@", inurl);
-    NSURL *url;
+    NSArray *components = [inurl pathComponents];
+    // Find /Volume/*/ part of path only (needed for finding server URL because Apple is annoying)
+    NSURL *volurl = [NSURL URLWithString:[NSString stringWithFormat:@"file:///%@/%@", components[1], components[2]]];
+    //DBG NSLog(@"volurl=%@", volurl);
+    // Last part of output (remove /Volumes/*/)
+    NSString *normalized2 = [[components subarrayWithRange:NSMakeRange(3, [components count] - 3)]
+                             componentsJoinedByString:@"\\"];
+    //DBG NSLog(@"path2=%@", normalized2);
+    // Server URL
+    NSURL *srvurl;
     NSError *__autoreleasing *err;
-    [inurl getResourceValue:&url forKey:NSURLVolumeURLForRemountingKey error:err];
-    url = [url absoluteURL];
+    [volurl getResourceValue:&srvurl forKey:NSURLVolumeURLForRemountingKey error:err];
+    //DBG NSLog(@"url=%@", srvurl);
     if (err!=NULL) {
-        NSLog(@"url=%@", url);
+        NSLog(@"volurl=%@", volurl);
         //DBG NSLog(@"Error determining mount URL: %@", err);
     }
-    NSArray *components = [inurl pathComponents];
-    components = [components subarrayWithRange:NSMakeRange(3, [components count] - 3)];
-    NSString *normalized2 = [components componentsJoinedByString:@"\\"];
-    //DBG NSLog(@"path2=%@", normalized2);
-    components = [url pathComponents];
-    components = [components subarrayWithRange:NSMakeRange(1, [components count] - 1)];
-    NSString *normalized1 = [components componentsJoinedByString:@"\\"];
-    //DBG NSLog(@"path1=%@", normalized1);
     // Get hostname
-    NSString *normhost = [url host];
+    NSString *normhost = [srvurl host];
     //DBG NSLog(@"host=%@", normhost);
-    NSString *winpath = [NSString stringWithFormat:@"\\\\%@\\%@\\%@", normhost, normalized1, normalized2];
+    NSString *winpath = [NSString stringWithFormat:@"\\\\%@\\%@\\%@", normhost, [srvurl lastPathComponent], normalized2];
     
     
     [[NSPasteboard generalPasteboard] declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
