@@ -28,8 +28,9 @@
 {
     NSString *slashed = [[link stringByReplacingOccurrencesOfString:@"\\" withString:@"/"] stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     slashed = [self percentEscape:slashed];
-    NSURL *url = [NSURL URLWithString: [NSString stringWithFormat:@"smb:%@", slashed]];
-    //DBG NSLog(@"slashed=%@", url);
+    slashed = [slashed hasPrefix:@"smb:"] ? slashed : [NSString stringWithFormat:@"smb:%@", slashed];
+    NSURL *url = [NSURL URLWithString: slashed];
+    NSLog(@"slashed=%@", url);
     NSArray *path = [url pathComponents];
     //DBG NSLog(@"pathComponents=%@", path);
     
@@ -131,6 +132,6 @@
 
 +(NSString *) percentEscape:(NSString *) input
 {
-    return [input stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet characterSetWithCharactersInString:@"/"]];
+    return [input stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPathAllowedCharacterSet]];
 }
 @end
